@@ -297,7 +297,7 @@
 
 
 
-<div class="gratis">NU GRATIS EDITIE &nbsp;GRATIS VERSIE!!! DOWNLOAD NU!! SPEEL GRATIS ZONDER GELD!!!! 100% GRATIS GEEN VIRUS!!!! SPEEL NU!!! العب لعبة ماستر جي آي جي إس الآن بدون فيروسات! تحميل مجاني بدون أي تكلفة GRATIS GRATIS!!!!</div>
+<div class="gratis">NU GRATIS EDITIE &nbsp;— GRATIS GRATIS!!!!</div>
 
 <script>
   // ── START OVERLAY ────────────────────────────────────────
@@ -350,16 +350,16 @@
     switch(type) {
       case 'scale':
         // harsh, snappy, steppy — no easing
-        const s1 = 1.25 + Math.random() * 0.4;
-        const s2 = 0.6 + Math.random() * 0.2;
+        const s1 = 2.2 + Math.random() * 1.0;
+        const s2 = 0.15 + Math.random() * 0.15;
         const sk = (Math.random() - .5) * 20;
         img.animate([
           { transform: 'scale(1)',                              offset: 0    },
           { transform: `scale(${s1}) skewX(${sk}deg)`,         offset: 0.15 },
           { transform: `scale(${s2}) skewX(${-sk*0.5}deg)`,    offset: 0.35 },
-          { transform: `scale(${s1*0.8}) skewX(0deg)`,         offset: 0.55 },
-          { transform: 'scale(1.4) skewY(4deg)',                offset: 0.70 },
-          { transform: 'scale(0.75)',                           offset: 0.82 },
+          { transform: `scale(${s1*0.7}) skewX(0deg)`,         offset: 0.55 },
+          { transform: 'scale(3.0) skewY(4deg)',                offset: 0.70 },
+          { transform: 'scale(0.08)',                           offset: 0.82 },
           { transform: 'scale(1)',                              offset: 1    },
         ], { duration: dur, easing: 'steps(1)', fill: 'forwards' });
         break;
@@ -369,10 +369,12 @@
         ], { duration: dur, easing: 'steps(1)' });
         break;
       case 'rotate':
+        const r1 = (Math.random() < 0.5 ? 1 : -1) * (10 + Math.random() * 70);
+        const r2 = (Math.random() < 0.5 ? 1 : -1) * (10 + Math.random() * 70);
         img.animate([
           { transform: 'rotate(0deg)' },
-          { transform: `rotate(${(Math.random()-.5)*22}deg) skewX(${(Math.random()-.5)*12}deg)` },
-          { transform: `rotate(${(Math.random()-.5)*10}deg) scaleX(1.1)` },
+          { transform: `rotate(${r1}deg) skewX(${(Math.random()-.5)*12}deg)` },
+          { transform: `rotate(${r2}deg) scaleX(1.1)` },
           { transform: 'rotate(0deg)' }
         ], { duration: dur, easing: 'steps(3)' });
         break;
