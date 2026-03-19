@@ -138,21 +138,29 @@
   .gratis {
     position: fixed;
     bottom: 22px;
-    right: 0;
+    right: 28px;
     z-index: 20;
     font-family: 'Share Tech Mono', monospace;
-    font-size: 13px;
-    letter-spacing: 3px;
+    font-size: 32px;
+    letter-spacing: 4px;
     text-transform: uppercase;
     white-space: nowrap;
     pointer-events: none;
-    animation: gratisScroll 8s linear infinite;
+    color: #ff0022;
+    animation: gratisFlits 2.3s steps(1) infinite;
   }
 
-  @keyframes gratisScroll {
-    0%   { transform: translateX(0);       color: #ff0022; opacity: 1; }
-    65%  { color: #ff0022; opacity: 1; }
-    100% { transform: translateX(-120vw);  color: #ff0022; opacity: 0; }
+  @keyframes gratisFlits {
+    0%   { color: #ff0022; opacity: 1; }
+    45%  { color: #ff0022; opacity: 1; }
+    46%  { color: transparent; opacity: 0; }
+    72%  { color: transparent; opacity: 0; }
+    73%  { color: #ff0022; opacity: 1; }
+    80%  { color: #ff0022; opacity: 1; }
+    81%  { color: transparent; opacity: 0; }
+    88%  { color: transparent; opacity: 0; }
+    89%  { color: #ff0022; opacity: 1; }
+    100% { color: #ff0022; opacity: 1; }
   }
 
   /* ── ESCAPE BUTTON ── */
@@ -295,9 +303,7 @@
 
 </div>
 
-
-
-<div class="gratis">NU GRATIS EDITIE &nbsp;— GRATIS GRATIS!!!!</div>
+<div class="gratis">NU GRATIS DOWNLOAD!!!! &nbsp; MEESTERGIJS 2 GRATIS EDITIE!!!!!</div>
 
 <script>
   // ── START OVERLAY ────────────────────────────────────────
@@ -349,7 +355,6 @@
 
     switch(type) {
       case 'scale':
-        // harsh, snappy, steppy — no easing
         const s1 = 2.2 + Math.random() * 1.0;
         const s2 = 0.15 + Math.random() * 0.15;
         const sk = (Math.random() - .5) * 20;
@@ -416,13 +421,12 @@
         break;
     }
 
-    // much more frequent: 200–900ms between glitches
     setTimeout(runTitleGlitch, 200 + Math.random() * 700);
   }
 
   setTimeout(runTitleGlitch, 600);
 
-  // rapid burst chains — fire 2-5 glitches back to back
+  // rapid burst chains
   (function burst() {
     const count = 2 + Math.floor(Math.random() * 4);
     for (let i = 0; i < count; i++) {
@@ -446,7 +450,6 @@
   // ── ESCAPE ────────────────────────────────────────────────
   document.getElementById('btnEscape').addEventListener('click', () => {
     window.close();
-    // fallback voor browsers die window.close() blokkeren
     window.location.href = 'about:blank';
   });
 </script>
