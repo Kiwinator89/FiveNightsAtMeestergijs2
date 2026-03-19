@@ -102,8 +102,7 @@ function goToNight1() {
   fadeOverlay.classList.add('active');
   setTimeout(() => {
     fadeAudio(intermission, 0, 400, () => { intermission.pause(); });
-    // TODO: schakel over naar je nacht 1 pagina:
-    // window.location.href = 'night1.html';
+    window.location.href = 'night1.html';
   }, 520);
 }
 
