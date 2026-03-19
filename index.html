@@ -84,35 +84,20 @@
   .btn-endure {
     position: relative;
     background: transparent;
-    border: 2px solid var(--red);
-    color: var(--red);
+    border: none;
+    color: #ffffff;
     font-family: 'Share Tech Mono', monospace;
     font-size: 22px;
     letter-spacing: 8px;
     text-transform: uppercase;
-    padding: 18px 48px;
+    padding: 10px 0;
     cursor: pointer;
     overflow: hidden;
-    transition: color 0.15s;
-    text-shadow: 0 0 12px rgba(255,0,34,0.6);
-    box-shadow: 0 0 18px rgba(255,0,34,0.25), inset 0 0 18px rgba(255,0,34,0.05);
+    transition: text-shadow 0.15s;
   }
 
-  .btn-endure::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: var(--red);
-    transform: translateX(-105%);
-    transition: transform 0.28s cubic-bezier(0.4,0,0.2,1);
-    z-index: 0;
-  }
-
-  .btn-endure:hover::before { transform: translateX(0); }
   .btn-endure:hover {
-    color: #fff;
-    box-shadow: 0 0 40px rgba(255,0,34,0.7), inset 0 0 30px rgba(255,0,34,0.2);
-    text-shadow: 0 0 20px #fff;
+    text-shadow: 0 0 18px rgba(255,255,255,0.8);
   }
 
   .btn-endure span { position: relative; z-index: 1; }
@@ -153,22 +138,19 @@
   .btn-escape {
     position: relative;
     background: transparent;
-    border: 1px solid rgba(200,200,200,0.2);
-    color: rgba(200,200,200,0.4);
+    border: none;
+    color: rgba(200,200,200,0.45);
     font-family: 'Share Tech Mono', monospace;
     font-size: 13px;
     letter-spacing: 6px;
     text-transform: uppercase;
-    padding: 12px 36px;
+    padding: 10px 0;
     cursor: pointer;
-    overflow: hidden;
-    transition: color 0.2s, border-color 0.2s, box-shadow 0.2s;
+    transition: color 0.2s;
   }
 
   .btn-escape:hover {
-    color: rgba(200,200,200,0.8);
-    border-color: rgba(200,200,200,0.5);
-    box-shadow: 0 0 12px rgba(200,200,200,0.1);
+    color: rgba(200,200,200,0.85);
   }
 
   .btn-escape span { position: relative; z-index: 1; }
@@ -204,39 +186,54 @@
     will-change: transform, opacity, filter;
   }
 
-  /* ── FOOTER ── */
-  .footer {
-    position: fixed;
-    bottom: 22px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 10px;
-    letter-spacing: 3px;
-    color: rgba(255,255,255,0.12);
-    z-index: 10;
-  }
-
-  /* ── CLICK TO START OVERLAY ── */
+  /* ── WARNING OVERLAY ── */
   #startOverlay {
     position: fixed;
     inset: 0;
     z-index: 100;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: rgba(8,8,8,0.85);
+    background: rgba(8,8,8,0.93);
     cursor: pointer;
+    gap: 28px;
+    padding: 40px;
   }
 
-  #startOverlay span {
+  #startOverlay .warning-title {
+    font-size: 28px;
+    letter-spacing: 8px;
+    color: var(--red);
+    text-shadow: 0 0 24px rgba(255,0,34,0.8);
+    animation: pulse 1.2s ease-in-out infinite;
+  }
+
+  #startOverlay .warning-body {
     font-size: 13px;
-    letter-spacing: 6px;
-    color: rgba(255,255,255,0.4);
-    animation: pulse 1.6s ease-in-out infinite;
+    letter-spacing: 3px;
+    color: rgba(220,220,220,0.75);
+    text-align: center;
+    line-height: 2.2;
+    max-width: 560px;
+    text-transform: uppercase;
+  }
+
+  #startOverlay .warning-body strong {
+    color: #fff;
+    text-shadow: 0 0 8px rgba(255,255,255,0.4);
+  }
+
+  #startOverlay .warning-click {
+    font-size: 11px;
+    letter-spacing: 5px;
+    color: rgba(255,255,255,0.25);
+    margin-top: 12px;
+    animation: pulse 1.8s ease-in-out infinite;
   }
 
   @keyframes pulse {
-    0%,100% { opacity: 0.4; }
+    0%,100% { opacity: 0.5; }
     50%      { opacity: 1; }
   }
 </style>
@@ -245,7 +242,13 @@
 
 <!-- click-to-start (needed for autoplay policy) -->
 <div id="startOverlay">
-  <span>KLIK OM TE STARTEN</span>
+  <div class="warning-title">&#9888; WAARSCHUWING!</div>
+  <div class="warning-body">
+    DIT SPEL BEVAT <strong>HARDE GELUIDEN</strong> EN <strong>VEEL JUMPSCARES</strong>.<br>
+    DIT SPEL BEVAT <strong>HUMOR DIE NIET IEDEREEN KAN WAARDEREN</strong>.<br>
+    <strong>SPEEL OP EIGEN RISICO!!!</strong>
+  </div>
+  <div class="warning-click">— klik ergens om door te gaan —</div>
 </div>
 
 <audio id="menuMusic" src="Audio/Menu.mp3" loop></audio>
@@ -271,7 +274,7 @@
 
 </div>
 
-<div class="footer">[ HOOFDMENU ]</div>
+
 
 <script>
   // ── START OVERLAY ────────────────────────────────────────
