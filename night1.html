@@ -7,552 +7,370 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 
-  :root {
-    --red: #ff0022;
-    --bg:  #080808;
-  }
+  :root { --red: #ff0022; }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
     background: #000;
-    width: 100vw;
-    height: 100vh;
+    width: 100vw; height: 100vh;
     overflow: hidden;
     font-family: 'Share Tech Mono', monospace;
     cursor: crosshair;
     user-select: none;
   }
 
-  /* ══════════════════════════════════════
-     NACHT 1 TITEL INTRO
-  ══════════════════════════════════════ */
+  /* ── NACHT TITEL ── */
   #nightTitle {
-    position: fixed;
-    inset: 0;
-    z-index: 300;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    position: fixed; inset: 0; z-index: 300;
+    display: flex; align-items: center; justify-content: center;
     background: #000;
-    opacity: 1;
-    transition: opacity 1s ease;
+    opacity: 1; transition: opacity 1s ease;
   }
-
-  #nightTitle.fade-out {
-    opacity: 0;
-    pointer-events: none;
-  }
-
+  #nightTitle.fade-out { opacity: 0; pointer-events: none; }
   #nightTitle span {
     font-size: clamp(32px, 8vw, 80px);
-    letter-spacing: 14px;
-    color: var(--red);
-    text-transform: uppercase;
+    letter-spacing: 14px; color: var(--red); text-transform: uppercase;
     text-shadow: 0 0 40px rgba(255,0,34,0.8), 0 0 80px rgba(255,0,34,0.4);
     animation: titlePulse 0.8s ease-in-out infinite;
   }
+  @keyframes titlePulse { 0%,100%{opacity:0.7} 50%{opacity:1} }
 
-  @keyframes titlePulse {
-    0%,100% { opacity: 0.7; }
-    50%      { opacity: 1; }
-  }
-
-  /* ══════════════════════════════════════
-     KANTOOR SCHERM (hoofd gameplay)
-  ══════════════════════════════════════ */
+  /* ── KANTOOR ── */
   #office {
-    position: fixed;
-    inset: 0;
-    z-index: 10;
-    background: #0a0a0a;
-    display: none;
+    position: fixed; inset: 0; z-index: 10;
+    background: #0a0a0a; display: none;
   }
-
   #office.active { display: block; }
 
-  /* kantoor achtergrond */
   #officeBg {
-    position: absolute;
-    inset: 0;
+    position: absolute; inset: 0;
     background: linear-gradient(180deg, #0d0d0d 0%, #111 60%, #0a0a0a 100%);
   }
-
-  /* plafond lamp sfeer */
   #officeBg::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 50%;
-    transform: translateX(-50%);
-    width: 60%;
-    height: 45%;
-    background: radial-gradient(ellipse at 50% 0%, rgba(255,200,100,0.04) 0%, transparent 70%);
+    content: ''; position: absolute;
+    top: 0; left: 50%; transform: translateX(-50%);
+    width: 60%; height: 45%;
+    background: radial-gradient(ellipse at 50% 0%, rgba(255,200,100,0.05) 0%, transparent 70%);
     pointer-events: none;
   }
-
-  /* scanlines */
   #office::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: 90;
+    content: ''; position: absolute; inset: 0; z-index: 90;
     pointer-events: none;
-    background: repeating-linear-gradient(
-      to bottom,
+    background: repeating-linear-gradient(to bottom,
       transparent 0px, transparent 3px,
-      rgba(0,0,0,0.15) 3px, rgba(0,0,0,0.15) 4px
-    );
+      rgba(0,0,0,0.15) 3px, rgba(0,0,0,0.15) 4px);
+  }
+  #officeVignette {
+    position: absolute; inset: 0; z-index: 80; pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.75) 100%);
+  }
+  #wallLeft, #wallRight {
+    position: absolute; top: 0; bottom: 0; width: 18vw; z-index: 15; pointer-events: none;
+  }
+  #wallLeft  { left: 0;  background: linear-gradient(90deg,  #060606 0%, transparent 100%); }
+  #wallRight { right: 0; background: linear-gradient(270deg, #060606 0%, transparent 100%); }
+  #ceiling {
+    position: absolute; top: 0; left: 0; right: 0; height: 8%;
+    background: #0a0a0a; border-bottom: 1px solid #161616; z-index: 15;
+  }
+  #lamp {
+    position: absolute; top: 8%; left: 50%; transform: translateX(-50%);
+    width: 3px; height: 6vh; background: #1a1a1a; z-index: 16;
+  }
+  #lamp::after {
+    content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+    width: 28px; height: 14px; background: #222;
+    border-radius: 0 0 14px 14px; box-shadow: 0 0 20px rgba(255,200,80,0.08);
   }
 
   /* ── DEUR ── */
   #door {
-    position: absolute;
-    left: 50%;
-    top: 8%;
+    position: absolute; left: 50%; top: 8%;
     transform: translateX(-50%);
-    width: 28vw;
-    max-width: 320px;
-    height: 72vh;
+    width: min(28vw, 280px); height: 72vh;
     z-index: 20;
   }
-
-  /* deur frame */
-  #doorFrame {
-    position: absolute;
-    inset: 0;
-    border: 4px solid #2a2a2a;
-    border-radius: 4px 4px 0 0;
-    box-shadow: inset 0 0 30px rgba(0,0,0,0.8), 0 0 20px rgba(0,0,0,0.9);
-  }
-
-  /* het gat in de deur - donkere gang */
   #doorHole {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, #000 0%, #050505 100%);
-    border-radius: 4px 4px 0 0;
-    overflow: hidden;
+    position: absolute; inset: 0;
+    background: #000; border-radius: 4px 4px 0 0; overflow: hidden;
   }
-
-  /* Gijs verschijnt in het gat */
+  /* Gijs in deur: afbeelding correct geschaald en gecentreerd */
   #gijsInDoor {
-    position: absolute;
-    inset: 0;
-    background-image: url('Images/GijsCam6.png');
-    background-size: cover;
-    background-position: center top;
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
     opacity: 0;
-    transition: opacity 0.3s linear;
   }
-
-  /* het deurpaneel zelf (beweegt omlaag bij sluiten) */
+  #gijsInDoor img {
+    width: 100%; height: 100%;
+    object-fit: contain;
+    object-position: center center;
+  }
+  #doorFrame {
+    position: absolute; inset: 0;
+    border: 4px solid #2a2a2a; border-radius: 4px 4px 0 0;
+    box-shadow: inset 0 0 30px rgba(0,0,0,0.8), 0 0 20px rgba(0,0,0,0.9);
+    pointer-events: none;
+  }
+  /* deurpaneel schuift omlaag vanuit boven */
   #doorPanel {
-    position: absolute;
-    left: 0; right: 0;
-    bottom: 0;
+    position: absolute; left: 0; right: 0; top: 0;
     height: 100%;
     background: linear-gradient(180deg, #1c1c1c 0%, #151515 50%, #111 100%);
-    border: 2px solid #2a2a2a;
-    border-top: 6px solid #333;
+    border: 2px solid #2a2a2a; border-top: 6px solid #333;
     transform: translateY(-100%);
-    transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transition: transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     z-index: 5;
   }
-
-  #doorPanel.closed {
-    transform: translateY(0%);
+  #doorPanel.closed { transform: translateY(0%); }
+  #doorPanel::before {
+    content: ''; position: absolute; inset: 12px;
+    border: 2px solid rgba(255,255,255,0.03); border-radius: 2px;
   }
 
-  /* deur streepjes decoratie */
-  #doorPanel::before {
-    content: '';
+  /* ── DEUR HENDEL (trek/duw systeem) ── */
+  #doorHandleWrap {
     position: absolute;
-    inset: 12px;
-    border: 2px solid rgba(255,255,255,0.03);
+    bottom: 14%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  #doorHandle {
+    width: 52px; height: 18px;
+    background: linear-gradient(180deg, #444 0%, #2a2a2a 100%);
+    border: 2px solid #555; border-radius: 9px;
+    cursor: ns-resize;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.7);
+    transition: background 0.15s, box-shadow 0.15s, transform 0.1s;
+    position: relative;
+  }
+  #doorHandle::after {
+    content: '';
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 22px; height: 3px;
+    background: rgba(255,255,255,0.12);
     border-radius: 2px;
   }
+  #doorHandle:hover { background: linear-gradient(180deg, #666 0%, #444 100%); }
+  #doorHandle.dragging { transform: scaleY(1.2); cursor: grabbing; box-shadow: 0 0 16px rgba(255,120,0,0.4); }
+  #doorHandle.locked { opacity: 0.3; cursor: not-allowed; }
 
-  /* deur hendel / trek knop */
-  #doorHandle {
+  #doorStatusLabel {
+    font-size: 8px; letter-spacing: 3px;
+    color: rgba(255,255,255,0.18); text-transform: uppercase;
+    pointer-events: none; white-space: nowrap;
+  }
+  #doorStatusLabel.open-label  { color: rgba(0,200,80,0.5); }
+  #doorStatusLabel.closed-label{ color: rgba(255,100,0,0.6); }
+
+  /* O2 bar container */
+  #o2Wrap {
     position: absolute;
-    bottom: 18%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 44px;
-    height: 14px;
-    background: #333;
-    border: 2px solid #444;
+    bottom: 14%;
+    left: 20px;
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+  #o2Label {
+    font-size: 9px; letter-spacing: 4px;
+    color: rgba(100,200,255,0.5); text-transform: uppercase;
+  }
+  #o2BarOuter {
+    width: 14px; height: 120px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(100,200,255,0.15);
+    border-radius: 7px; overflow: hidden;
+    display: flex; flex-direction: column; justify-content: flex-end;
+  }
+  #o2BarInner {
+    width: 100%; height: 100%;
+    background: linear-gradient(180deg, #44aaff 0%, #0066cc 100%);
     border-radius: 7px;
-    cursor: pointer;
-    z-index: 30;
-    transition: background 0.2s, box-shadow 0.2s;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+    transition: height 0.3s linear, background 0.5s;
   }
-
-  #doorHandle:hover {
-    background: #555;
-    box-shadow: 0 0 12px rgba(255,100,0,0.3);
+  #o2BarInner.low {
+    background: linear-gradient(180deg, #ff6600 0%, #cc2200 100%);
+    animation: o2Pulse 0.5s ease-in-out infinite;
   }
+  @keyframes o2Pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
 
-  #doorHandle.disabled {
-    cursor: default;
-    opacity: 0.3;
-  }
-
-  /* deur label */
-  #doorLabel {
-    position: absolute;
-    bottom: calc(18% - 28px);
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 9px;
-    letter-spacing: 3px;
-    color: rgba(255,255,255,0.15);
-    white-space: nowrap;
-    z-index: 30;
-    pointer-events: none;
-  }
-
-  /* ── BUREAU / ONDERKANT ── */
+  /* ── BUREAU ── */
   #desk {
-    position: absolute;
-    bottom: 0;
-    left: 0; right: 0;
-    height: 22vh;
+    position: absolute; bottom: 0; left: 0; right: 0; height: 22vh;
     background: linear-gradient(180deg, #111 0%, #0d0d0d 100%);
-    border-top: 2px solid #1e1e1e;
-    z-index: 40;
+    border-top: 2px solid #1e1e1e; z-index: 40;
   }
-
-  /* camera knop */
   #camBtn {
-    position: absolute;
-    bottom: 28px;
-    right: 36px;
-    background: transparent;
-    border: 1px solid rgba(255,255,255,0.2);
+    position: absolute; bottom: 28px; right: 36px;
+    background: transparent; border: 1px solid rgba(255,255,255,0.2);
     color: rgba(255,255,255,0.6);
     font-family: 'Share Tech Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 4px;
-    padding: 10px 18px;
-    cursor: pointer;
-    text-transform: uppercase;
+    font-size: 10px; letter-spacing: 4px; padding: 10px 18px;
+    cursor: pointer; text-transform: uppercase;
     transition: border-color 0.2s, color 0.2s, box-shadow 0.2s;
   }
-
-  #camBtn:hover {
-    border-color: var(--red);
-    color: #fff;
-    box-shadow: 0 0 12px rgba(255,0,34,0.3);
-  }
-
-  /* tijd */
+  #camBtn:hover { border-color: var(--red); color: #fff; box-shadow: 0 0 12px rgba(255,0,34,0.3); }
   #clock {
-    position: absolute;
-    bottom: 36px;
-    left: 36px;
-    font-size: 11px;
-    letter-spacing: 4px;
-    color: rgba(255,255,255,0.25);
+    position: absolute; bottom: 36px; left: 36px;
+    font-size: 11px; letter-spacing: 4px; color: rgba(255,255,255,0.25);
   }
-
-  /* nacht indicator */
   #nightLabel {
-    position: absolute;
-    bottom: 36px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 9px;
-    letter-spacing: 5px;
-    color: rgba(255,0,34,0.4);
-    text-transform: uppercase;
+    position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%);
+    font-size: 9px; letter-spacing: 5px; color: rgba(255,0,34,0.4); text-transform: uppercase;
   }
 
-  /* ══════════════════════════════════════
-     CAMERA OVERLAY
-  ══════════════════════════════════════ */
+  /* ── CAMERA OVERLAY ── */
   #cameraOverlay {
-    position: fixed;
-    inset: 0;
-    z-index: 100;
-    background: #000;
-    display: none;
-    flex-direction: column;
+    position: fixed; inset: 0; z-index: 100;
+    background: #000; display: none; flex-direction: column;
   }
-
   #cameraOverlay.active { display: flex; }
 
-  /* camera feed */
   #camFeed {
-    flex: 1;
-    position: relative;
-    overflow: hidden;
-    background: #000;
+    flex: 1; position: relative; overflow: hidden; background: #000;
   }
-
-  #camFeed img {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: none;
+  /* één groot feed-beeld, correct geschaald */
+  #camFeedImg {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: contain;
+    object-position: center center;
+    display: block;
   }
-
-  #camFeed img.active { display: block; }
-
-  /* camera ruis overlay */
   #camNoise {
-    position: absolute;
-    inset: 0;
-    z-index: 5;
-    pointer-events: none;
-    opacity: 0.06;
+    position: absolute; inset: 0; z-index: 5;
+    pointer-events: none; opacity: 0.05;
   }
-
-  /* camera scanlines */
   #camFeed::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: 6;
-    pointer-events: none;
-    background: repeating-linear-gradient(
-      to bottom,
+    content: ''; position: absolute; inset: 0; z-index: 6; pointer-events: none;
+    background: repeating-linear-gradient(to bottom,
       transparent 0px, transparent 2px,
-      rgba(0,0,0,0.3) 2px, rgba(0,0,0,0.3) 3px
-    );
+      rgba(0,0,0,0.25) 2px, rgba(0,0,0,0.25) 3px);
   }
-
-  /* camera HUD bovenin */
+  /* vignette over cam */
+  #camFeed::before {
+    content: ''; position: absolute; inset: 0; z-index: 7; pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.6) 100%);
+  }
   #camHud {
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    z-index: 10;
-    padding: 14px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
+    position: absolute; top: 0; left: 0; right: 0; z-index: 10;
+    padding: 14px 20px; display: flex; justify-content: space-between; align-items: flex-start;
     pointer-events: none;
   }
-
-  #camHud .cam-label {
-    font-size: 11px;
-    letter-spacing: 5px;
-    color: rgba(255,255,255,0.5);
-    text-transform: uppercase;
-  }
-
-  #camHud .cam-rec {
-    font-size: 10px;
-    letter-spacing: 3px;
-    color: var(--red);
-    animation: blink 1s steps(1) infinite;
-  }
-
-  /* monster locatie indicator */
+  #camHud .cam-label { font-size: 11px; letter-spacing: 5px; color: rgba(255,255,255,0.5); }
+  #camHud .cam-rec   { font-size: 10px; letter-spacing: 3px; color: var(--red); animation: blink 1s steps(1) infinite; }
   #monsterIndicator {
-    position: absolute;
-    bottom: 80px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 9px;
-    letter-spacing: 4px;
-    color: rgba(255,0,34,0.5);
-    text-transform: uppercase;
-    z-index: 10;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.3s;
+    position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%);
+    font-size: 9px; letter-spacing: 4px; color: rgba(255,0,34,0.7); text-transform: uppercase;
+    z-index: 10; pointer-events: none; opacity: 0; transition: opacity 0.3s;
   }
-
   #monsterIndicator.visible { opacity: 1; }
 
-  /* camera selectie balk */
-  #camBar {
-    height: 90px;
-    background: rgba(0,0,0,0.92);
-    border-top: 1px solid rgba(255,255,255,0.06);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    padding: 0 16px;
-    flex-shrink: 0;
+  /* switch timer bar */
+  #switchTimerWrap {
+    position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%);
+    z-index: 10; display: flex; flex-direction: column; align-items: center; gap: 4px;
+    pointer-events: none;
   }
-
-  .cam-thumb {
-    flex: 1;
-    max-width: 110px;
-    height: 62px;
-    background: #111;
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 3px;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    transition: border-color 0.15s;
+  #switchTimerLabel {
+    font-size: 8px; letter-spacing: 3px; color: rgba(255,255,255,0.25);
   }
-
-  .cam-thumb:hover    { border-color: rgba(255,255,255,0.25); }
-  .cam-thumb.selected { border-color: var(--red); box-shadow: 0 0 8px rgba(255,0,34,0.3); }
-
-  .cam-thumb img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    opacity: 0.6;
+  #switchTimerBar {
+    width: 160px; height: 3px;
+    background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden;
   }
-
-  .cam-thumb .cam-num {
-    position: absolute;
-    bottom: 4px;
-    left: 6px;
-    font-size: 8px;
-    letter-spacing: 2px;
-    color: rgba(255,255,255,0.5);
+  #switchTimerFill {
+    height: 100%; width: 0%;
+    background: rgba(255,200,50,0.7); border-radius: 2px;
+    transition: width 0.1s linear;
   }
+  #switchTimerFill.fast { background: rgba(255,80,80,0.9); }
 
-  .cam-thumb.has-monster::after {
-    content: '!';
-    position: absolute;
-    top: 4px; right: 6px;
-    font-size: 10px;
-    color: var(--red);
-    animation: blink 0.5s steps(1) infinite;
-  }
-
-  /* sluit camera knop */
-  #closeCam {
-    position: absolute;
-    top: 14px;
-    right: 20px;
-    background: transparent;
-    border: 1px solid rgba(255,255,255,0.15);
-    color: rgba(255,255,255,0.4);
+  /* snelheidsknop */
+  #speedBtn {
+    position: absolute; top: 14px; left: 20px;
+    background: transparent; border: 1px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.35);
     font-family: 'Share Tech Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 3px;
-    padding: 6px 12px;
-    cursor: pointer;
-    text-transform: uppercase;
-    z-index: 20;
+    font-size: 8px; letter-spacing: 3px; padding: 5px 10px;
+    cursor: pointer; text-transform: uppercase; z-index: 20;
     transition: border-color 0.2s, color 0.2s;
   }
+  #speedBtn:hover { border-color: rgba(255,200,50,0.5); color: rgba(255,200,50,0.8); }
+  #speedBtn.fast  { border-color: rgba(255,80,80,0.5);  color: rgba(255,80,80,0.9);  }
 
-  #closeCam:hover {
-    border-color: rgba(255,255,255,0.4);
-    color: #fff;
+  #closeCam {
+    position: absolute; top: 14px; right: 20px;
+    background: transparent; border: 1px solid rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.4);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px; letter-spacing: 3px; padding: 6px 12px;
+    cursor: pointer; text-transform: uppercase; z-index: 20;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  #closeCam:hover { border-color: rgba(255,255,255,0.4); color: #fff; }
+
+  /* thumbnail balk */
+  #camBar {
+    height: 86px; background: rgba(0,0,0,0.92);
+    border-top: 1px solid rgba(255,255,255,0.06);
+    display: flex; align-items: center; justify-content: center;
+    gap: 8px; padding: 0 12px; flex-shrink: 0;
+  }
+  .cam-thumb {
+    flex: 1; max-width: 106px; height: 62px;
+    background: #0d0d0d; border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 3px; cursor: pointer;
+    position: relative; overflow: hidden;
+    transition: border-color 0.15s;
+  }
+  .cam-thumb:hover    { border-color: rgba(255,255,255,0.22); }
+  .cam-thumb.selected { border-color: var(--red); box-shadow: 0 0 8px rgba(255,0,34,0.3); }
+  .cam-thumb img {
+    width: 100%; height: 100%;
+    object-fit: cover; opacity: 0.55;
+  }
+  .cam-thumb .cam-num {
+    position: absolute; bottom: 3px; left: 5px;
+    font-size: 8px; letter-spacing: 2px; color: rgba(255,255,255,0.4);
+  }
+  .cam-thumb.has-monster::after {
+    content: '!'; position: absolute; top: 3px; right: 5px;
+    font-size: 11px; color: var(--red); animation: blink 0.5s steps(1) infinite;
   }
 
-  /* ══════════════════════════════════════
-     JUMPSCARE SCHERM
-  ══════════════════════════════════════ */
+  /* ── JUMPSCARE ── */
   #jumpscareScreen {
-    position: fixed;
-    inset: 0;
-    z-index: 500;
-    display: none;
-    background: #000;
+    position: fixed; inset: 0; z-index: 500; display: none; background: #000;
   }
-
   #jumpscareScreen.active { display: block; }
+  #jumpscareScreen img { width: 100%; height: 100%; object-fit: cover; }
 
-  #jumpscareScreen img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  /* ══════════════════════════════════════
-     FADE OVERLAY
-  ══════════════════════════════════════ */
+  /* ── FADE ── */
   #fadeOverlay {
-    position: fixed;
-    inset: 0;
-    z-index: 400;
-    background: #000;
-    opacity: 0;
-    pointer-events: none;
+    position: fixed; inset: 0; z-index: 400;
+    background: #000; opacity: 0; pointer-events: none;
     transition: opacity 0.6s ease;
   }
+  #fadeOverlay.active { opacity: 1; pointer-events: all; }
 
-  #fadeOverlay.active {
-    opacity: 1;
-    pointer-events: all;
-  }
-
-  /* ══════════════════════════════════════
-     UTILITIES
-  ══════════════════════════════════════ */
-  @keyframes blink {
-    0%,100% { opacity: 1; }
-    50%      { opacity: 0; }
-  }
-
-  /* vignette over kantoor */
-  #officeVignette {
-    position: absolute;
-    inset: 0;
-    z-index: 80;
-    pointer-events: none;
-    background: radial-gradient(ellipse at center,
-      transparent 30%,
-      rgba(0,0,0,0.7) 100%
-    );
-  }
-
-  /* wanden links/rechts */
-  #wallLeft, #wallRight {
-    position: absolute;
-    top: 0; bottom: 0;
-    width: 18vw;
-    z-index: 15;
-    pointer-events: none;
-  }
-  #wallLeft  { left:  0; background: linear-gradient(90deg,  #080808 0%, transparent 100%); }
-  #wallRight { right: 0; background: linear-gradient(270deg, #080808 0%, transparent 100%); }
-
-  /* plafond strip */
-  #ceiling {
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 8%;
-    background: #0a0a0a;
-    border-bottom: 1px solid #161616;
-    z-index: 15;
-  }
-
-  /* lamp */
-  #lamp {
-    position: absolute;
-    top: 8%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 3px;
-    height: 6vh;
-    background: #1a1a1a;
-    z-index: 16;
-  }
-  #lamp::after {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 50%;
-    transform: translateX(-50%);
-    width: 28px; height: 14px;
-    background: #222;
-    border-radius: 0 0 14px 14px;
-    box-shadow: 0 0 20px rgba(255,200,80,0.08);
-  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
 </style>
 </head>
 <body>
 
-<!-- ── NACHT 1 TITEL ── -->
 <div id="nightTitle"><span>Nacht 1</span></div>
 
-<!-- ── KANTOOR ── -->
+<!-- KANTOOR -->
 <div id="office">
   <div id="officeBg"></div>
   <div id="ceiling"></div>
@@ -560,20 +378,29 @@
   <div id="wallLeft"></div>
   <div id="wallRight"></div>
 
-  <!-- deur -->
   <div id="door">
     <div id="doorHole">
-      <div id="gijsInDoor"></div>
+      <div id="gijsInDoor">
+        <img src="Images/GijsCam6.png" alt="Gijs">
+      </div>
     </div>
     <div id="doorFrame"></div>
     <div id="doorPanel"></div>
-    <div id="doorHandle" title="Trek deur dicht"></div>
-    <div id="doorLabel">TREK OM TE SLUITEN</div>
+    <div id="doorHandleWrap">
+      <div id="doorHandle"></div>
+      <div id="doorStatusLabel" class="open-label">OPEN</div>
+    </div>
+  </div>
+
+  <!-- O2 meter links van deur -->
+  <div id="o2Wrap">
+    <div id="o2Label">O₂</div>
+    <div id="o2BarOuter">
+      <div id="o2BarInner"></div>
+    </div>
   </div>
 
   <div id="officeVignette"></div>
-
-  <!-- bureau -->
   <div id="desk">
     <div id="clock">00:00</div>
     <div id="nightLabel">— Nacht 1 —</div>
@@ -581,114 +408,133 @@
   </div>
 </div>
 
-<!-- ── CAMERA OVERLAY ── -->
+<!-- CAMERA OVERLAY -->
 <div id="cameraOverlay">
   <div id="camFeed">
     <canvas id="camNoise"></canvas>
-    <img id="camImg1" src="Images/GijsCam1.png" alt="Cam 1">
-    <img id="camImg2" src="Images/GijsCam2.png" alt="Cam 2">
-    <img id="camImg3" src="Images/GijsCam3.png" alt="Cam 3">
-    <img id="camImg4" src="Images/GijsCam4.png" alt="Cam 4">
-    <img id="camImg5" src="Images/GijsCam5.png" alt="Cam 5">
-    <img id="camImg6" src="Images/GijsCam6.png" alt="Cam 6">
+    <!-- één feed afbeelding, src wordt geswiched via JS -->
+    <img id="camFeedImg" src="Images/GijsCam1.png" alt="">
 
     <div id="camHud">
       <div class="cam-label" id="camName">CAM 1</div>
       <div class="cam-rec">● REC</div>
     </div>
-
-    <div id="monsterIndicator">⚠ MEESTER GIJS GEDETECTEERD</div>
+    <div id="monsterIndicator">⚠ MEESTER GIJS</div>
+    <button id="speedBtn">▶ SNEL</button>
     <button id="closeCam">✕ SLUIT</button>
+
+    <div id="switchTimerWrap">
+      <div id="switchTimerLabel">AUTO-SWITCH</div>
+      <div id="switchTimerBar"><div id="switchTimerFill"></div></div>
+    </div>
   </div>
 
   <div id="camBar">
     <div class="cam-thumb selected" data-cam="1">
-      <img src="Images/GijsCam1.png" alt="">
-      <span class="cam-num">CAM 1</span>
+      <img src="Images/GijsCam1.png" alt=""><span class="cam-num">CAM 1</span>
     </div>
     <div class="cam-thumb" data-cam="2">
-      <img src="Images/GijsCam2.png" alt="">
-      <span class="cam-num">CAM 2</span>
+      <img src="Images/GijsCam2.png" alt=""><span class="cam-num">CAM 2</span>
     </div>
     <div class="cam-thumb" data-cam="3">
-      <img src="Images/GijsCam3.png" alt="">
-      <span class="cam-num">CAM 3</span>
+      <img src="Images/GijsCam3.png" alt=""><span class="cam-num">CAM 3</span>
     </div>
     <div class="cam-thumb" data-cam="4">
-      <img src="Images/GijsCam4.png" alt="">
-      <span class="cam-num">CAM 4</span>
+      <img src="Images/GijsCam4.png" alt=""><span class="cam-num">CAM 4</span>
     </div>
     <div class="cam-thumb" data-cam="5">
-      <img src="Images/GijsCam5.png" alt="">
-      <span class="cam-num">CAM 5</span>
+      <img src="Images/GijsCam5.png" alt=""><span class="cam-num">CAM 5</span>
     </div>
     <div class="cam-thumb" data-cam="6">
-      <img src="Images/GijsCam6.png" alt="">
-      <span class="cam-num">CAM 6</span>
+      <img src="Images/GijsCam6.png" alt=""><span class="cam-num">CAM 6</span>
     </div>
   </div>
 </div>
 
-<!-- ── JUMPSCARE ── -->
+<!-- JUMPSCARE -->
 <div id="jumpscareScreen">
   <img src="Images/GijsJumpscare.png" alt="JUMPSCARE">
 </div>
 
-<!-- ── FADE ── -->
 <div id="fadeOverlay"></div>
-
 <audio id="jumpscareAudio" src="Audio/Jumpscare.mp3"></audio>
 
 <script>
-// ══════════════════════════════════════════════════════════
+// ════════════════════════════════════════
 //  STATE
-// ══════════════════════════════════════════════════════════
-const STATE = {
-  gijsPos:       1,          // camera 1 t/m 6, dan 'deur'
-  doorClosed:    false,
-  gameOver:      false,
-  camOpen:       false,
-  currentCam:    1,
-  atDoor:        false,
-  gijsOpacity:   0,
-  fadeInterval:  null,
-  attackTimeout: null,
-  moveInterval:  null,
+// ════════════════════════════════════════
+const S = {
+  gijsPos:      1,
+  doorClosed:   false,
+  gameOver:     false,
+  camOpen:      false,
+  currentCam:   1,
+  atDoor:       false,
+
+  // O2
+  o2:           100,       // 0–100
+  o2Draining:   false,
+
+  // deur drag
+  dragStartY:   null,
+  dragging:     false,
+  doorProgress: 0,         // 0 = open, 1 = dicht
+
+  // gijs in deur
+  gijsOpacity:  0,
+  fadeIv:       null,
+  attackTO:     null,
+  moveTO:       null,
+
+  // camera auto-switch
+  switchProgress: 0,       // 0–100
+  switchFast:     false,
+  switchIv:       null,
+  penaltyOnOpen:  false,   // penalty wanneer cam opengaat
 };
 
-// cameravolgorde: 1 → 2 → 3 → 4 → 5 → 6 → deur
-const CAM_PATH = [1, 2, 3, 4, 5, 6, 'deur'];
+const CAM_PATH        = [1, 2, 3, 4, 5, 6];
+const SWITCH_NORMAL   = 8;    // seconden per camera
+const SWITCH_FAST     = 3;
+const SWITCH_PENALTY  = 15;   // seconden penalty bij heropenen
 
-// ══════════════════════════════════════════════════════════
-//  DOM REFS
-// ══════════════════════════════════════════════════════════
-const nightTitle      = document.getElementById('nightTitle');
-const office          = document.getElementById('office');
-const doorPanel       = document.getElementById('doorPanel');
-const doorHandle      = document.getElementById('doorHandle');
-const gijsInDoor      = document.getElementById('gijsInDoor');
-const cameraOverlay   = document.getElementById('cameraOverlay');
-const camFeed         = document.getElementById('camFeed');
-const camName         = document.getElementById('camName');
-const monsterIndicator= document.getElementById('monsterIndicator');
-const jumpscareScreen = document.getElementById('jumpscareScreen');
-const jumpscareAudio  = document.getElementById('jumpscareAudio');
-const fadeOverlay     = document.getElementById('fadeOverlay');
-const camBtn          = document.getElementById('camBtn');
-const closeCamBtn     = document.getElementById('closeCam');
-const camThumbs       = document.querySelectorAll('.cam-thumb');
-const camImages       = {
-  1: document.getElementById('camImg1'),
-  2: document.getElementById('camImg2'),
-  3: document.getElementById('camImg3'),
-  4: document.getElementById('camImg4'),
-  5: document.getElementById('camImg5'),
-  6: document.getElementById('camImg6'),
+// ════════════════════════════════════════
+//  DOM
+// ════════════════════════════════════════
+const nightTitle       = document.getElementById('nightTitle');
+const office           = document.getElementById('office');
+const doorPanel        = document.getElementById('doorPanel');
+const doorHandle       = document.getElementById('doorHandle');
+const doorStatusLabel  = document.getElementById('doorStatusLabel');
+const gijsInDoor       = document.getElementById('gijsInDoor');
+const o2BarInner       = document.getElementById('o2BarInner');
+const cameraOverlay    = document.getElementById('cameraOverlay');
+const camFeedImg       = document.getElementById('camFeedImg');
+const camName          = document.getElementById('camName');
+const monsterIndicator = document.getElementById('monsterIndicator');
+const jumpscareScreen  = document.getElementById('jumpscareScreen');
+const jumpscareAudio   = document.getElementById('jumpscareAudio');
+const fadeOverlay      = document.getElementById('fadeOverlay');
+const camBtn           = document.getElementById('camBtn');
+const closeCamBtn      = document.getElementById('closeCam');
+const speedBtn         = document.getElementById('speedBtn');
+const switchTimerFill  = document.getElementById('switchTimerFill');
+const camThumbs        = document.querySelectorAll('.cam-thumb');
+const clockEl          = document.getElementById('clock');
+
+// cam src map
+const CAM_SRCS = {
+  1: 'Images/GijsCam1.png',
+  2: 'Images/GijsCam2.png',
+  3: 'Images/GijsCam3.png',
+  4: 'Images/GijsCam4.png',
+  5: 'Images/GijsCam5.png',
+  6: 'Images/GijsCam6.png',
 };
 
-// ══════════════════════════════════════════════════════════
-//  CAMERA RUIS CANVAS
-// ══════════════════════════════════════════════════════════
+// ════════════════════════════════════════
+//  CAMERA RUIS
+// ════════════════════════════════════════
 const noiseCanvas = document.getElementById('camNoise');
 const noiseCtx    = noiseCanvas.getContext('2d');
 
@@ -699,24 +545,23 @@ function resizeNoise() {
 resizeNoise();
 window.addEventListener('resize', resizeNoise);
 
-function drawNoise() {
-  if (!STATE.camOpen) { requestAnimationFrame(drawNoise); return; }
-  const w = noiseCanvas.width, h = noiseCanvas.height;
-  const id = noiseCtx.createImageData(w, h);
-  const d  = id.data;
-  for (let i = 0; i < d.length; i += 4) {
-    const v = Math.random() > 0.5 ? 255 : 0;
-    d[i] = d[i+1] = d[i+2] = v;
-    d[i+3] = 255;
+(function drawNoise() {
+  if (S.camOpen) {
+    const w = noiseCanvas.width, h = noiseCanvas.height;
+    const id = noiseCtx.createImageData(w, h);
+    const d  = id.data;
+    for (let i = 0; i < d.length; i += 4) {
+      const v = Math.random() > 0.5 ? 200 : 0;
+      d[i] = d[i+1] = d[i+2] = v; d[i+3] = 255;
+    }
+    noiseCtx.putImageData(id, 0, 0);
   }
-  noiseCtx.putImageData(id, 0, 0);
   requestAnimationFrame(drawNoise);
-}
-drawNoise();
+})();
 
-// ══════════════════════════════════════════════════════════
-//  INTRO: NACHT 1 TITEL
-// ══════════════════════════════════════════════════════════
+// ════════════════════════════════════════
+//  INTRO
+// ════════════════════════════════════════
 setTimeout(() => {
   nightTitle.classList.add('fade-out');
   setTimeout(() => {
@@ -726,201 +571,294 @@ setTimeout(() => {
   }, 1100);
 }, 2200);
 
-// ══════════════════════════════════════════════════════════
+// ════════════════════════════════════════
 //  GAME START
-// ══════════════════════════════════════════════════════════
+// ════════════════════════════════════════
 function startGame() {
-  STATE.gijsPos = 1;
-  STATE.doorClosed = false;
-  STATE.gameOver   = false;
-  STATE.atDoor     = false;
-  STATE.gijsOpacity = 0;
-
-  scheduleMoveGijs();
+  S.gijsPos     = 1;
+  S.doorClosed  = false;
+  S.gameOver    = false;
+  S.atDoor      = false;
+  S.gijsOpacity = 0;
+  S.o2          = 100;
+  S.doorProgress= 0;
+  updateO2Bar();
+  updateDoorVisual();
+  scheduleGijsMove();
   updateCamThumbs();
+  startO2Loop();
+  startClockLoop();
 }
 
-// ══════════════════════════════════════════════════════════
+// ════════════════════════════════════════
 //  GIJS BEWEGING
-// ══════════════════════════════════════════════════════════
-function scheduleMoveGijs() {
-  if (STATE.gameOver) return;
-
-  // willekeurige tijd tussen moves: 4-12 seconden
-  const delay = 4000 + Math.random() * 8000;
-  STATE.moveInterval = setTimeout(moveGijs, delay);
+// ════════════════════════════════════════
+function scheduleGijsMove() {
+  if (S.gameOver) return;
+  S.moveTO = setTimeout(moveGijs, 5000 + Math.random() * 9000);
 }
 
 function moveGijs() {
-  if (STATE.gameOver) return;
-
-  const idx = CAM_PATH.indexOf(STATE.gijsPos);
-
+  if (S.gameOver) return;
+  const idx = CAM_PATH.indexOf(S.gijsPos);
   if (idx < CAM_PATH.length - 1) {
-    STATE.gijsPos = CAM_PATH[idx + 1];
-  }
-
-  updateCamThumbs();
-
-  if (STATE.gijsPos === 'deur') {
-    // Gijs staat bij de deur
-    STATE.atDoor = true;
-    startGijsApproach();
+    S.gijsPos = CAM_PATH[idx + 1];
+    updateCamThumbs();
+    scheduleGijsMove();
   } else {
-    scheduleMoveGijs();
+    // was op cam 6, nu naar deur
+    S.gijsPos = 'deur';
+    S.atDoor  = true;
+    updateCamThumbs();
+    startGijsApproach();
   }
 }
 
 function updateCamThumbs() {
-  camThumbs.forEach(thumb => {
-    const n = parseInt(thumb.dataset.cam);
-    thumb.classList.toggle('has-monster', STATE.gijsPos === n);
+  camThumbs.forEach(t => {
+    t.classList.toggle('has-monster', S.gijsPos === parseInt(t.dataset.cam));
   });
-
-  // monster indicator in camera feed
-  if (STATE.camOpen) {
-    monsterIndicator.classList.toggle(
-      'visible',
-      STATE.gijsPos === STATE.currentCam
-    );
+  if (S.camOpen) {
+    monsterIndicator.classList.toggle('visible', S.gijsPos === S.currentCam);
   }
 }
 
-// ══════════════════════════════════════════════════════════
-//  GIJS NADERT DE DEUR
-// ══════════════════════════════════════════════════════════
+// ════════════════════════════════════════
+//  GIJS NADERT DEUR
+// ════════════════════════════════════════
 function startGijsApproach() {
-  if (STATE.doorClosed) return; // deur al dicht, veilig
+  if (S.doorClosed) return;
 
-  // random tijd 5–20 seconden voordat aanval start
   const attackDelay = 5000 + Math.random() * 15000;
-
-  STATE.gijsOpacity  = 0;
+  S.gijsOpacity = 0;
   gijsInDoor.style.opacity = '0';
 
-  // langzaam opacity ophogen over de beschikbare tijd
-  const fadeDuration = attackDelay * 0.9;
-  const steps        = 60;
-  const stepTime     = fadeDuration / steps;
-  const stepAmount   = 1 / steps;
-  let   s            = 0;
+  const steps    = 80;
+  const stepTime = (attackDelay * 0.92) / steps;
 
-  STATE.fadeInterval = setInterval(() => {
-    if (STATE.doorClosed || STATE.gameOver) {
-      clearInterval(STATE.fadeInterval);
+  S.fadeIv = setInterval(() => {
+    if (S.doorClosed || S.gameOver) {
+      clearInterval(S.fadeIv);
       gijsInDoor.style.opacity = '0';
       return;
     }
-    s++;
-    STATE.gijsOpacity = Math.min(1, s * stepAmount);
-    gijsInDoor.style.opacity = STATE.gijsOpacity;
+    S.gijsOpacity = Math.min(1, S.gijsOpacity + 1 / steps);
+    gijsInDoor.style.opacity = S.gijsOpacity;
   }, stepTime);
 
-  STATE.attackTimeout = setTimeout(() => {
-    if (!STATE.doorClosed && !STATE.gameOver) {
-      triggerJumpscare();
-    }
+  S.attackTO = setTimeout(() => {
+    if (!S.doorClosed && !S.gameOver) triggerJumpscare();
   }, attackDelay);
 }
 
-// ══════════════════════════════════════════════════════════
-//  DEUR SLUITEN
-// ══════════════════════════════════════════════════════════
-doorHandle.addEventListener('click', () => {
-  if (STATE.doorClosed || STATE.gameOver) return;
+// ════════════════════════════════════════
+//  DEUR DRAG SYSTEEM
+// ════════════════════════════════════════
+// Drag omlaag = sluiten, omhoog = openen
+let dragStartY    = 0;
+let dragStartProg = 0;
 
-  STATE.doorClosed = true;
-  doorPanel.classList.add('closed');
-  doorHandle.classList.add('disabled');
+function startDrag(e) {
+  if (S.gameOver) return;
+  if (S.o2 <= 0 && !S.doorClosed) return; // geen O2 meer, deur blijft open
+  S.dragging   = true;
+  dragStartY   = e.touches ? e.touches[0].clientY : e.clientY;
+  dragStartProg= S.doorProgress;
+  doorHandle.classList.add('dragging');
+  e.preventDefault();
+}
 
-  // stop gijs approach
-  clearInterval(STATE.fadeInterval);
-  clearTimeout(STATE.attackTimeout);
-  gijsInDoor.style.opacity = '0';
+function onDrag(e) {
+  if (!S.dragging || S.gameOver) return;
+  const y     = e.touches ? e.touches[0].clientY : e.clientY;
+  const delta = y - dragStartY;
+  // 150px sleep = volledige actie
+  const newProg = Math.max(0, Math.min(1, dragStartProg + delta / 150));
+  S.doorProgress = newProg;
+  updateDoorVisual();
+  e.preventDefault();
+}
 
-  // deur staat dicht — speler overleeft nacht 1
-  // (hier kun je later de "nacht gewonnen" logica toevoegen)
-});
+function endDrag() {
+  if (!S.dragging) return;
+  S.dragging = false;
+  doorHandle.classList.remove('dragging');
 
-// ══════════════════════════════════════════════════════════
+  // snap: > 0.5 = dicht, anders open
+  if (S.doorProgress >= 0.5) {
+    S.doorProgress = 1;
+    S.doorClosed   = true;
+    S.o2Draining   = true;
+    clearInterval(S.fadeIv);
+    clearTimeout(S.attackTO);
+    gijsInDoor.style.opacity = '0';
+  } else {
+    S.doorProgress = 0;
+    S.doorClosed   = false;
+    S.o2Draining   = false;
+    // als Gijs bij de deur stond en deur gaat open → herstart approach
+    if (S.atDoor) startGijsApproach();
+  }
+  updateDoorVisual();
+}
+
+function updateDoorVisual() {
+  // doorPanel schuift van boven omlaag: translateY(-100% → 0%)
+  const pct = (1 - S.doorProgress) * 100;
+  doorPanel.style.transform = `translateY(-${pct}%)`;
+
+  const isClosed = S.doorProgress >= 1;
+  doorStatusLabel.textContent = isClosed ? 'DICHT' : 'OPEN';
+  doorStatusLabel.className   = isClosed ? 'closed-label' : 'open-label';
+
+  // lock handle als geen O2 meer en deur open
+  doorHandle.classList.toggle('locked', S.o2 <= 0 && !S.doorClosed);
+}
+
+doorHandle.addEventListener('mousedown',  startDrag);
+doorHandle.addEventListener('touchstart', startDrag, { passive: false });
+document.addEventListener('mousemove',    onDrag);
+document.addEventListener('touchmove',    onDrag, { passive: false });
+document.addEventListener('mouseup',      endDrag);
+document.addEventListener('touchend',     endDrag);
+
+// ════════════════════════════════════════
+//  O2 SYSTEEM
+// ════════════════════════════════════════
+function startO2Loop() {
+  setInterval(() => {
+    if (S.gameOver) return;
+    if (S.doorClosed) {
+      // deur dicht = O2 daalt
+      S.o2 = Math.max(0, S.o2 - 0.4);
+      if (S.o2 <= 0) {
+        // O2 op: forceer deur open
+        S.doorProgress = 0;
+        S.doorClosed   = false;
+        S.o2Draining   = false;
+        updateDoorVisual();
+        if (S.atDoor) startGijsApproach();
+      }
+    } else {
+      // deur open = O2 stijgt langzaam terug
+      S.o2 = Math.min(100, S.o2 + 0.15);
+    }
+    updateO2Bar();
+  }, 100);
+}
+
+function updateO2Bar() {
+  const pct = S.o2;
+  o2BarInner.style.height = pct + '%';
+  o2BarInner.classList.toggle('low', pct < 25);
+}
+
+// ════════════════════════════════════════
 //  JUMPSCARE
-// ══════════════════════════════════════════════════════════
+// ════════════════════════════════════════
 function triggerJumpscare() {
-  if (STATE.gameOver) return;
-  STATE.gameOver = true;
-
-  clearInterval(STATE.fadeInterval);
-  clearTimeout(STATE.attackTimeout);
-  clearTimeout(STATE.moveInterval);
+  if (S.gameOver) return;
+  S.gameOver = true;
+  clearInterval(S.fadeIv);
+  clearTimeout(S.attackTO);
+  clearTimeout(S.moveTO);
+  clearInterval(S.switchIv);
 
   jumpscareScreen.classList.add('active');
   jumpscareAudio.currentTime = 0;
   jumpscareAudio.play().catch(() => {});
 
-  // na 3 seconden → main menu
   setTimeout(() => {
     fadeOverlay.classList.add('active');
-    setTimeout(() => {
-      window.location.href = 'index.html';
-    }, 700);
+    setTimeout(() => { window.location.href = 'index.html'; }, 700);
   }, 3000);
 }
 
-// ══════════════════════════════════════════════════════════
+// ════════════════════════════════════════
 //  CAMERA SYSTEEM
-// ══════════════════════════════════════════════════════════
+// ════════════════════════════════════════
 camBtn.addEventListener('click', openCameras);
 closeCamBtn.addEventListener('click', closeCameras);
 
 function openCameras() {
-  STATE.camOpen = true;
+  S.camOpen = true;
+  // penalty: switch timer gaat een stuk omhoog
+  S.switchProgress = Math.min(100, S.switchProgress + (SWITCH_PENALTY / getCurrentSwitchTime()) * 100);
   cameraOverlay.classList.add('active');
-  switchCam(STATE.currentCam);
+  switchCam(S.currentCam);
+  startSwitchTimer();
+  updateSwitchBar();
 }
 
 function closeCameras() {
-  STATE.camOpen = false;
+  S.camOpen = false;
   cameraOverlay.classList.remove('active');
+  clearInterval(S.switchIv);
 }
 
 function switchCam(n) {
-  STATE.currentCam = n;
-
-  // wissel feed afbeelding
-  Object.values(camImages).forEach(img => img.classList.remove('active'));
-  if (camImages[n]) camImages[n].classList.add('active');
-
-  // update label
+  S.currentCam = n;
+  camFeedImg.src = CAM_SRCS[n];
   camName.textContent = 'CAM ' + n;
-
-  // highlight geselecteerde thumb
-  camThumbs.forEach(t => {
-    t.classList.toggle('selected', parseInt(t.dataset.cam) === n);
-  });
-
-  // monster indicator
-  monsterIndicator.classList.toggle('visible', STATE.gijsPos === n);
+  camThumbs.forEach(t => t.classList.toggle('selected', parseInt(t.dataset.cam) === n));
+  monsterIndicator.classList.toggle('visible', S.gijsPos === n);
+  S.switchProgress = 0;
+  updateSwitchBar();
 }
 
-camThumbs.forEach(thumb => {
-  thumb.addEventListener('click', () => {
-    switchCam(parseInt(thumb.dataset.cam));
-  });
+camThumbs.forEach(t => {
+  t.addEventListener('click', () => switchCam(parseInt(t.dataset.cam)));
 });
 
-// ══════════════════════════════════════════════════════════
-//  KLOK (decoratief)
-// ══════════════════════════════════════════════════════════
-const clockEl   = document.getElementById('clock');
-let   clockSecs = 0;
+// ── AUTO-SWITCH TIMER ──
+function getCurrentSwitchTime() {
+  return S.switchFast ? SWITCH_FAST : SWITCH_NORMAL;
+}
 
-setInterval(() => {
-  if (STATE.gameOver) return;
-  clockSecs++;
-  const m = String(Math.floor(clockSecs / 60)).padStart(2, '0');
-  const s = String(clockSecs % 60).padStart(2, '0');
-  clockEl.textContent = m + ':' + s;
-}, 1000);
+function startSwitchTimer() {
+  clearInterval(S.switchIv);
+  const tickMs  = 100;
+
+  S.switchIv = setInterval(() => {
+    if (!S.camOpen || S.gameOver) { clearInterval(S.switchIv); return; }
+    const totalMs = getCurrentSwitchTime() * 1000;
+    S.switchProgress = Math.min(100, S.switchProgress + (tickMs / totalMs) * 100);
+    updateSwitchBar();
+
+    if (S.switchProgress >= 100) {
+      // auto switch naar volgende cam
+      const idx  = CAM_PATH.indexOf(S.currentCam);
+      const next = CAM_PATH[(idx + 1) % CAM_PATH.length];
+      switchCam(next);
+    }
+  }, tickMs);
+}
+
+function updateSwitchBar() {
+  switchTimerFill.style.width = S.switchProgress + '%';
+  switchTimerFill.classList.toggle('fast', S.switchFast);
+}
+
+// snelheidsknop
+speedBtn.addEventListener('click', () => {
+  S.switchFast = !S.switchFast;
+  speedBtn.textContent = S.switchFast ? '■ NORMAAL' : '▶ SNEL';
+  speedBtn.classList.toggle('fast', S.switchFast);
+});
+
+// ════════════════════════════════════════
+//  KLOK
+// ════════════════════════════════════════
+function startClockLoop() {
+  let secs = 0;
+  setInterval(() => {
+    if (S.gameOver) return;
+    secs++;
+    clockEl.textContent =
+      String(Math.floor(secs / 60)).padStart(2,'0') + ':' +
+      String(secs % 60).padStart(2,'0');
+  }, 1000);
+}
 </script>
 </body>
 </html>
