@@ -99,11 +99,17 @@ function startLore() {
 
 // ── NAAR NACHT 1 ──────────────────────────────────────────
 function goToNight1() {
-  fadeOverlay.classList.add('active');
-  setTimeout(() => {
-    fadeAudio(intermission, 0, 400, () => { intermission.pause(); });
-    window.location.href = 'night1.html';
-  }, 520);
+  fadeAudio(intermission, 0, 500, () => { intermission.pause(); });
+
+  requestAnimationFrame(() => {
+    fadeOverlay.style.transition    = 'opacity 0.6s ease';
+    fadeOverlay.style.opacity       = '1';
+    fadeOverlay.style.pointerEvents = 'all';
+
+    setTimeout(() => {
+      window.location.href = 'night1.html';
+    }, 650);
+  });
 }
 
 // ── UTIL: AUDIO FADE ─────────────────────────────────────
