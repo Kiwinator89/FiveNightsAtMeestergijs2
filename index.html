@@ -1,1 +1,411 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Main Menu</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 
+  :root {
+    --red: #ff0022;
+    --cyan: #00ffe7;
+    --bg: #080808;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    min-height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    font-family: 'Share Tech Mono', monospace;
+    cursor: crosshair;
+  }
+
+  /* ── STATIC NOISE ── */
+  #static {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    opacity: 0.08;
+    pointer-events: none;
+  }
+
+  /* ── SCANLINES ── */
+  .scanlines {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 3px,
+      rgba(0,0,0,0.22) 3px,
+      rgba(0,0,0,0.22) 4px
+    );
+  }
+
+  /* ── VIGNETTE ── */
+  .vignette {
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background: radial-gradient(ellipse at center,
+      transparent 35%,
+      rgba(0,0,0,0.92) 100%
+    );
+  }
+
+  /* ── LAYOUT ── */
+  .layout {
+    position: relative;
+    z-index: 10;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 8vw;
+  }
+
+  /* ── LEFT: BUTTONS ── */
+  .left-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    align-items: flex-start;
+  }
+
+  /* ── ENDURE BUTTON ── */
+  .btn-endure {
+    position: relative;
+    background: transparent;
+    border: 2px solid var(--red);
+    color: var(--red);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 22px;
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    padding: 18px 48px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: color 0.15s;
+    text-shadow: 0 0 12px rgba(255,0,34,0.6);
+    box-shadow: 0 0 18px rgba(255,0,34,0.25), inset 0 0 18px rgba(255,0,34,0.05);
+  }
+
+  .btn-endure::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--red);
+    transform: translateX(-105%);
+    transition: transform 0.28s cubic-bezier(0.4,0,0.2,1);
+    z-index: 0;
+  }
+
+  .btn-endure:hover::before { transform: translateX(0); }
+  .btn-endure:hover {
+    color: #fff;
+    box-shadow: 0 0 40px rgba(255,0,34,0.7), inset 0 0 30px rgba(255,0,34,0.2);
+    text-shadow: 0 0 20px #fff;
+  }
+
+  .btn-endure span { position: relative; z-index: 1; }
+
+  /* glitch states on endure */
+  .btn-endure.g-shake { animation: btnShake 0.35s linear; }
+  .btn-endure.g-flicker { animation: btnFlicker 0.4s steps(1); }
+  .btn-endure.g-skew { animation: btnSkew 0.35s ease-in-out; }
+  .btn-endure.g-red { animation: btnRed 0.5s ease; }
+
+  @keyframes btnShake {
+    0%,100% { transform: translate(0); }
+    20% { transform: translate(-6px, 2px) skewX(4deg); }
+    40% { transform: translate(6px, -2px) skewX(-4deg); }
+    60% { transform: translate(-4px, 1px); }
+    80% { transform: translate(4px, -1px); }
+  }
+  @keyframes btnFlicker {
+    0%,100% { opacity:1; }
+    15% { opacity:0; }
+    30% { opacity:1; }
+    50% { opacity:0.2; }
+    65% { opacity:1; }
+    80% { opacity:0; }
+  }
+  @keyframes btnSkew {
+    0%,100% { transform: skewX(0); }
+    30% { transform: skewX(-12deg) scaleX(1.08); }
+    60% { transform: skewX(8deg) scaleX(0.94); }
+  }
+  @keyframes btnRed {
+    0%,100% { box-shadow: 0 0 18px rgba(255,0,34,0.25); border-color: var(--red); }
+    40% { box-shadow: 0 0 60px rgba(255,0,34,1), 0 0 120px rgba(255,0,34,0.5); border-color: #fff; filter: brightness(1.8); }
+    70% { box-shadow: 0 0 30px rgba(255,0,34,0.7); }
+  }
+
+  /* ── ESCAPE BUTTON ── */
+  .btn-escape {
+    position: relative;
+    background: transparent;
+    border: 1px solid rgba(200,200,200,0.2);
+    color: rgba(200,200,200,0.4);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    padding: 12px 36px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: color 0.2s, border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .btn-escape:hover {
+    color: rgba(200,200,200,0.8);
+    border-color: rgba(200,200,200,0.5);
+    box-shadow: 0 0 12px rgba(200,200,200,0.1);
+  }
+
+  .btn-escape span { position: relative; z-index: 1; }
+
+  /* ── RIGHT: TITLE ── */
+  .right-panel {
+    position: relative;
+    width: 45vw;
+    max-width: 700px;
+    height: 50vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .title-ghost {
+    position: absolute;
+    inset: 0;
+    background: url('UI/Title.png') center / contain no-repeat;
+    opacity: 0;
+    pointer-events: none;
+    mix-blend-mode: screen;
+  }
+
+  .title-img {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 0 20px rgba(255,0,34,0.4));
+    will-change: transform, opacity, filter;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    position: fixed;
+    bottom: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: rgba(255,255,255,0.12);
+    z-index: 10;
+  }
+
+  /* ── CLICK TO START OVERLAY ── */
+  #startOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(8,8,8,0.85);
+    cursor: pointer;
+  }
+
+  #startOverlay span {
+    font-size: 13px;
+    letter-spacing: 6px;
+    color: rgba(255,255,255,0.4);
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%,100% { opacity: 0.4; }
+    50%      { opacity: 1; }
+  }
+</style>
+</head>
+<body>
+
+<!-- click-to-start (needed for autoplay policy) -->
+<div id="startOverlay">
+  <span>KLIK OM TE STARTEN</span>
+</div>
+
+<audio id="menuMusic" src="Audio/Menu.mp3" loop></audio>
+
+<canvas id="static"></canvas>
+<div class="scanlines"></div>
+<div class="vignette"></div>
+
+<div class="layout">
+
+  <!-- LEFT: knoppen -->
+  <div class="left-panel">
+    <button class="btn-endure" id="btnEndure"><span>ENDURE</span></button>
+    <button class="btn-escape" id="btnEscape"><span>ESCAPE</span></button>
+  </div>
+
+  <!-- RIGHT: titel -->
+  <div class="right-panel" id="titleWrap">
+    <div class="title-ghost" id="ghostRed"  style="filter: hue-rotate(0deg)   saturate(10) brightness(1.3);"></div>
+    <div class="title-ghost" id="ghostCyan" style="filter: hue-rotate(180deg) saturate(10) brightness(1.3);"></div>
+    <img class="title-img" id="titleImg" src="UI/Title.png" alt="Title">
+  </div>
+
+</div>
+
+<div class="footer">[ HOOFDMENU ]</div>
+
+<script>
+  // ── START OVERLAY ────────────────────────────────────────
+  document.getElementById('startOverlay').addEventListener('click', function() {
+    this.style.display = 'none';
+    document.getElementById('menuMusic').play().catch(() => {});
+  });
+
+  // ── STATIC NOISE ─────────────────────────────────────────
+  const canvas = document.getElementById('static');
+  const ctx    = canvas.getContext('2d');
+
+  function resizeCanvas() {
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  function drawStatic() {
+    const w = canvas.width, h = canvas.height;
+    const imageData = ctx.createImageData(w, h);
+    const d = imageData.data;
+    for (let i = 0; i < d.length; i += 4) {
+      const v = Math.random() > 0.5 ? 255 : 0;
+      d[i] = d[i+1] = d[i+2] = v;
+      d[i+3] = 255;
+    }
+    ctx.putImageData(imageData, 0, 0);
+    requestAnimationFrame(drawStatic);
+  }
+  drawStatic();
+
+  // ── TITLE GLITCH ─────────────────────────────────────────
+  const img    = document.getElementById('titleImg');
+  const ghostR = document.getElementById('ghostRed');
+  const ghostC = document.getElementById('ghostCyan');
+  const titleGlitches = ['scale','vanish','rotate','red','chromatic','skew','shake'];
+
+  function clearGhosts() {
+    ghostR.style.opacity = '0'; ghostR.style.transform = '';
+    ghostC.style.opacity = '0'; ghostC.style.transform = '';
+  }
+
+  function runTitleGlitch() {
+    const type = titleGlitches[Math.floor(Math.random() * titleGlitches.length)];
+    const dur  = 300 + Math.random() * 500;
+    clearGhosts();
+
+    switch(type) {
+      case 'scale':
+        img.animate([
+          { transform: 'scale(1)' },
+          { transform: `scale(${1.1+Math.random()*0.15}) skewX(${(Math.random()-.5)*6}deg)` },
+          { transform: 'scale(0.93)' },
+          { transform: 'scale(1)' }
+        ], { duration: dur, easing: 'ease-in-out' });
+        break;
+      case 'vanish':
+        img.animate([
+          {opacity:1},{opacity:0},{opacity:1},{opacity:0},{opacity:1}
+        ], { duration: dur, easing: 'steps(1)' });
+        break;
+      case 'rotate':
+        img.animate([
+          { transform: 'rotate(0deg)' },
+          { transform: `rotate(${(Math.random()-.5)*8}deg) skewX(${(Math.random()-.5)*5}deg)` },
+          { transform: `rotate(${(Math.random()-.5)*4}deg)` },
+          { transform: 'rotate(0deg)' }
+        ], { duration: dur, easing: 'ease-in-out' });
+        break;
+      case 'red':
+        img.animate([
+          { filter: 'drop-shadow(0 0 20px rgba(255,0,34,0.4)) saturate(1) brightness(1)' },
+          { filter: 'drop-shadow(0 0 60px rgba(255,0,34,1)) saturate(8) brightness(2.2)' },
+          { filter: 'drop-shadow(0 0 30px rgba(255,0,34,0.9)) saturate(5) brightness(1.5)' },
+          { filter: 'drop-shadow(0 0 20px rgba(255,0,34,0.4)) saturate(1) brightness(1)' }
+        ], { duration: dur });
+        break;
+      case 'chromatic':
+        ghostR.style.cssText += ';opacity:0.65;transform:translateX(-8px)';
+        ghostC.style.cssText += ';opacity:0.55;transform:translateX(8px)';
+        setTimeout(() => {
+          ghostR.style.opacity='0.3'; ghostR.style.transform='translateX(-3px)';
+          ghostC.style.opacity='0.25'; ghostC.style.transform='translateX(3px)';
+          setTimeout(clearGhosts, dur * 0.4);
+        }, dur * 0.55);
+        break;
+      case 'skew':
+        img.animate([
+          { transform: 'skewX(0deg) scaleX(1)' },
+          { transform: `skewX(${(Math.random()-.5)*18}deg) scaleX(${0.88+Math.random()*0.24})` },
+          { transform: 'skewX(0deg) scaleX(1)' }
+        ], { duration: dur, easing: 'ease-in-out' });
+        break;
+      case 'shake':
+        img.animate(
+          Array.from({length:9},(_,i)=>({
+            transform: i===8 ? 'translate(0,0)' :
+              `translate(${(Math.random()-.5)*22}px,${(Math.random()-.5)*10}px)`
+          })),
+          { duration: dur, easing: 'linear' }
+        );
+        break;
+    }
+    setTimeout(runTitleGlitch, 1500 + Math.random() * 3500);
+  }
+
+  setTimeout(runTitleGlitch, 1200);
+
+  // occasional burst
+  (function burst() {
+    if (Math.random() < 0.25) setTimeout(runTitleGlitch, 80 + Math.random() * 150);
+    setTimeout(burst, 4000 + Math.random() * 7000);
+  })();
+
+  // ── ENDURE BUTTON GLITCH ──────────────────────────────────
+  const btnEndure  = document.getElementById('btnEndure');
+  const btnGlitches = ['g-shake','g-flicker','g-skew','g-red'];
+
+  function runBtnGlitch() {
+    const cls = btnGlitches[Math.floor(Math.random() * btnGlitches.length)];
+    btnEndure.classList.add(cls);
+    btnEndure.addEventListener('animationend', () => btnEndure.classList.remove(cls), { once: true });
+    setTimeout(runBtnGlitch, 2000 + Math.random() * 4000);
+  }
+  setTimeout(runBtnGlitch, 2500);
+
+  // ── ESCAPE ────────────────────────────────────────────────
+  document.getElementById('btnEscape').addEventListener('click', () => {
+    window.close();
+    // fallback voor browsers die window.close() blokkeren
+    window.location.href = 'about:blank';
+  });
+</script>
+</body>
+</html>
