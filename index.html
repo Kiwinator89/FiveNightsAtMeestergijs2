@@ -134,6 +134,27 @@
     70% { box-shadow: 0 0 30px rgba(255,0,34,0.7); }
   }
 
+  /* ── GRATIS TEKST ── */
+  .gratis {
+    position: fixed;
+    bottom: 22px;
+    right: 0;
+    z-index: 20;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    pointer-events: none;
+    animation: gratisScroll 8s linear infinite;
+  }
+
+  @keyframes gratisScroll {
+    0%   { transform: translateX(0);       color: #ff0022; opacity: 1; }
+    65%  { color: #ff0022; opacity: 1; }
+    100% { transform: translateX(-120vw);  color: #ff0022; opacity: 0; }
+  }
+
   /* ── ESCAPE BUTTON ── */
   .btn-escape {
     position: relative;
@@ -275,6 +296,8 @@
 </div>
 
 
+
+<div class="gratis">NU GRATIS EDITIE &nbsp; GRATIS GEEN VIRUS!!! 100% GRATIS SPEEL NU!!! GRATIS VERSIE MEESTERGIJS GRATIS DOWNLOAD!!! GRATIS GRATIS!!!!</div>
 
 <script>
   // ── START OVERLAY ────────────────────────────────────────
